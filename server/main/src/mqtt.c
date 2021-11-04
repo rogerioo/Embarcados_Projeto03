@@ -15,15 +15,39 @@
 #include "lwip/dns.h"
 #include "lwip/netdb.h"
 
+#include "cJSON.h"
+
 #include "esp_log.h"
 #include "mqtt_client.h"
 
 #include "mqtt.h"
 
 #define TAG "MQTT"
+#define student_id "170021751"
 
 extern xSemaphoreHandle conexaoMQTTSemaphore;
 esp_mqtt_client_handle_t client;
+
+void handle_mqtt_register()
+{
+    uint8_t baseMac[6] = {0};
+    esp_efuse_mac_get_default(baseMac);
+
+    char *mac_address = calloc(18, sizeof(char));
+    sprintf(mac_address, "%02X:%02X:%02X:%02X:%02X:%02X",
+            baseMac[0], baseMac[1], baseMac[2], baseMac[3], baseMac[4], baseMac[5]);
+
+    char *topic = calloc(100, sizeof(char));
+    sprintf(topic, "fse2021/%s/dispositivos/%s", student_id, mac_address);
+
+    cJSON *request = cJSON_CreateObject();
+    cJSON_AddStringToObject(request, "mac_addres", mac_address);
+
+    char *json = cJSON_Print(request);
+    mqtt_envia_mensagem(topic, json);
+
+    ESP_LOGI("MQTT", "Send register request to topic %s", topic);
+}
 
 static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
 {
@@ -34,8 +58,10 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
     {
     case MQTT_EVENT_CONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
+
+        handle_mqtt_register();
+
         xSemaphoreGive(conexaoMQTTSemaphore);
-        msg_id = esp_mqtt_client_subscribe(client, "servidor/resposta", 0);
         break;
     case MQTT_EVENT_DISCONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
