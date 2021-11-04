@@ -1,0 +1,26 @@
+{
+  "C_Cpp.errorSquiggles": "Enabled",
+  "idf.espIdfPath": "/home/rogeriojunior/esp/esp-idf",
+  "idf.pythonBinPath": "/home/rogeriojunior/.espressif/python_env/idf5.0_py3.8_env/bin/python",
+  "idf.toolsPath": "/home/rogeriojunior/.espressif",
+  "idf.customExtraPaths": "/home/rogeriojunior/.espressif/tools/xtensa-esp32-elf/esp-2021r2-8.4.0/xtensa-esp32-elf/bin:/home/rogeriojunior/.espressif/tools/xtensa-esp32s2-elf/esp-2021r2-8.4.0/xtensa-esp32s2-elf/bin:/home/rogeriojunior/.espressif/tools/xtensa-esp32s3-elf/esp-2021r2-8.4.0/xtensa-esp32s3-elf/bin:/home/rogeriojunior/.espressif/tools/riscv32-esp-elf/esp-2021r2-8.4.0/riscv32-esp-elf/bin:/home/rogeriojunior/.espressif/tools/esp32ulp-elf/2.28.51-esp-20191205/esp32ulp-elf-binutils/bin:/home/rogeriojunior/.espressif/tools/esp32s2ulp-elf/2.28.51-esp-20191205/esp32s2ulp-elf-binutils/bin:/home/rogeriojunior/.espressif/tools/openocd-esp32/v0.10.0-esp32-20210902/openocd-esp32/bin",
+  "idf.customExtraVars": "{\"OPENOCD_SCRIPTS\":\"/home/rogeriojunior/.espressif/tools/openocd-esp32/v0.10.0-esp32-20210902/openocd-esp32/share/openocd/scripts\"}",
+  "idf.gitPath": "git",
+  "idf.adapterTargetName": "esp32",
+  "cmake.configureOnOpen": true,
+  "files.associations": {
+    "freertos.h": "c",
+    "wifi.h": "c",
+    "err.h": "c",
+    "opt.h": "c",
+    "lwipopts.h": "c",
+    "sntp_get_set_time.h": "c",
+    "sdkconfig.h": "c",
+    "esp_system.h": "c",
+    "esp_task.h": "c",
+    "freertosconfig.h": "c",
+    "freertosconfig_arch.h": "c",
+    "xtensa_config.h": "c",
+    "core.h": "c"
+  }
+}
