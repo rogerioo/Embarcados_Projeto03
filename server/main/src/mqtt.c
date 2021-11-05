@@ -2,30 +2,27 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
-#include "esp_system.h"
-#include "esp_event.h"
-#include "esp_netif.h"
+#include <esp_system.h>
+#include <esp_event.h>
+#include <esp_netif.h>
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/semphr.h"
-#include "freertos/queue.h"
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
+#include <freertos/semphr.h>
+#include <freertos/queue.h>
 
-#include "lwip/sockets.h"
-#include "lwip/dns.h"
-#include "lwip/netdb.h"
+#include <lwip/sockets.h>
+#include <lwip/dns.h>
+#include <lwip/netdb.h>
 
-#include "cJSON.h"
+#include <cJSON.h>
 
-#include "esp_log.h"
-#include "mqtt_client.h"
+#include <esp_log.h>
+#include <mqtt_client.h>
 
-#include "message.h"
-#include "mqtt.h"
-#include "nvs.h"
-
-#define TAG "MQTT"
-#define student_id "170021751"
+#include <message.h>
+#include <mqtt.h>
+#include <nvs.h>
 
 extern xSemaphoreHandle conexaoMQTTSemaphore;
 esp_mqtt_client_handle_t client;

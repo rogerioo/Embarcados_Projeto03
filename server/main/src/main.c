@@ -1,15 +1,15 @@
-#include "freertos/FreeRTOS.h"
-#include "freertos/semphr.h"
-#include "freertos/task.h"
-#include "driver/gpio.h"
-#include "sdkconfig.h"
-#include "esp_log.h"
+#include <freertos/FreeRTOS.h>
+#include <freertos/semphr.h>
+#include <freertos/task.h>
+#include <driver/gpio.h>
+#include <sdkconfig.h>
+#include <esp_log.h>
 
-#include "tasks.h"
-#include "dht11.h"
-#include "wifi.h"
-#include "mqtt.h"
-#include "nvs.h"
+#include <tasks.h>
+#include <dht11.h>
+#include <wifi.h>
+#include <mqtt.h>
+#include <nvs.h>
 
 xSemaphoreHandle mutex_wifi_connection;
 xSemaphoreHandle conexaoMQTTSemaphore;

@@ -25,7 +25,7 @@
 #ifndef DHT11_H_
 #define DHT11_H_
 
-#include "driver/gpio.h"
+#include <driver/gpio.h>
 
 enum dht11_status
 {
