@@ -21,6 +21,11 @@
     "freertosconfig.h": "c",
     "freertosconfig_arch.h": "c",
     "xtensa_config.h": "c",
-    "core.h": "c"
+    "core.h": "c",
+    "json.h": "c",
+    "system_error": "c",
+    "*.ipp": "c",
+    "message.h": "c",
+    "mqtt.h": "c"
   }
 }
