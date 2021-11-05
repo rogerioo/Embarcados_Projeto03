@@ -26,6 +26,8 @@
     "system_error": "c",
     "*.ipp": "c",
     "message.h": "c",
-    "mqtt.h": "c"
+    "mqtt.h": "c",
+    "task.h": "c",
+    "semphr.h": "c"
   }
 }
