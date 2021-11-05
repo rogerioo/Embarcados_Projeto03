@@ -14,9 +14,10 @@ void start_nvs()
     }
 
     ESP_ERROR_CHECK(ret);
+    ESP_ERROR_CHECK(nvs_flash_init_partition("mqtt_data"));
 }
 
-void write_value(const char *variable_name, const char *value)
+void nvs_write_value(const char *variable_name, const char *value)
 {
     nvs_handle mqq_data_handle;
     esp_err_t res_nvs = nvs_open_from_partition("mqtt_data", "mqtt", NVS_READWRITE, &mqq_data_handle);
@@ -26,7 +27,7 @@ void write_value(const char *variable_name, const char *value)
         ESP_LOGE("NVS", "Couldn't open NVS handler");
     }
 
-    esp_err_t res = nvs_set_i32(mqq_data_handle, variable_name, value);
+    esp_err_t res = nvs_set_str(mqq_data_handle, variable_name, value);
 
     if (res != ESP_OK)
     {
@@ -37,24 +38,26 @@ void write_value(const char *variable_name, const char *value)
     nvs_close(mqq_data_handle);
 }
 
-const char *read_value(const char *variable_name)
+const char *nvs_read_value(const char *variable_name)
 {
     nvs_handle mqq_data_handle;
-    esp_err_t res_nvs = nvs_open_from_partition("mqtt_data", "mqtt", NVS_READWRITE, &mqq_data_handle);
+    esp_err_t res_nvs = nvs_open_from_partition("mqtt_data", "mqtt", NVS_READONLY, &mqq_data_handle);
 
     if (res_nvs == ESP_ERR_NVS_NOT_FOUND)
     {
-        ESP_LOGE("NVS", "Namespace: armazenamento, não encontrado");
+        ESP_LOGE("NVS", "Namespace empty: (%s)", esp_err_to_name(res_nvs));
         return "";
     }
 
-    size_t required_size;
-    esp_err_t res = nvs_get_str(mqq_data_handle, variable_name, NULL, &required_size);
+    size_t *required_size;
+    required_size = calloc(1, sizeof(int));
+
+    esp_err_t res = nvs_get_str(mqq_data_handle, variable_name, NULL, required_size);
 
     switch (res)
     {
     case ESP_OK:
-        ESP_LOGI("NVS", "Find string with size: %d\n", required_size);
+        ESP_LOGI("NVS", "Find string with size: %zu", *required_size);
         break;
     case ESP_ERR_NOT_FOUND:
         ESP_LOGE("NVS", "Couldn't find value");
@@ -65,8 +68,22 @@ const char *read_value(const char *variable_name)
         break;
     }
 
-    char *value = malloc(required_size);
-    res = nvs_get_str(mqq_data_handle, variable_name, &value, &required_size);
+    char *value = malloc(*required_size);
+    res = nvs_get_str(mqq_data_handle, variable_name, value, required_size);
+
+    switch (res)
+    {
+    case ESP_OK:
+        ESP_LOGI("NVS", "Retrivied string: %s", value);
+        break;
+    case ESP_ERR_NOT_FOUND:
+        ESP_LOGE("NVS", "Couldn't find value");
+        return "";
+    default:
+        ESP_LOGE("NVS", "Couldn't access NVS: (%s)", esp_err_to_name(res));
+        return "";
+        break;
+    }
 
     nvs_close(mqq_data_handle);
 
