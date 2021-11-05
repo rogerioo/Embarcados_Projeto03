@@ -20,7 +20,9 @@
 #include "esp_log.h"
 #include "mqtt_client.h"
 
+#include "message.h"
 #include "mqtt.h"
+#include "nvs.h"
 
 #define TAG "MQTT"
 #define student_id "170021751"
@@ -28,8 +30,20 @@
 extern xSemaphoreHandle conexaoMQTTSemaphore;
 esp_mqtt_client_handle_t client;
 
+char *allocated_room;
+
 void handle_mqtt_register()
 {
+    const char *saved_room = nvs_read_value("allocated_room");
+
+    if (strcmp(saved_room, "") != 0)
+    {
+        allocated_room = saved_room;
+        xSemaphoreGive(conexaoMQTTSemaphore);
+
+        return;
+    }
+
     uint8_t baseMac[6] = {0};
     esp_efuse_mac_get_default(baseMac);
 
@@ -40,13 +54,28 @@ void handle_mqtt_register()
     char *topic = calloc(100, sizeof(char));
     sprintf(topic, "fse2021/%s/dispositivos/%s", student_id, mac_address);
 
-    cJSON *request = cJSON_CreateObject();
-    cJSON_AddStringToObject(request, "mac_addres", mac_address);
+    message request = {"register", mac_address};
+    const char *json = message_to_json(request);
 
-    char *json = cJSON_Print(request);
-    mqtt_envia_mensagem(topic, json);
+    mqtt_send_message(topic, json, 0);
+    esp_mqtt_client_subscribe(client, topic, 0);
 
     ESP_LOGI("MQTT", "Send register request to topic %s", topic);
+}
+
+void handle_receive_data(const char *data)
+{
+    message request = json_to_message(data);
+
+    if (strcmp(request.command, "register") == 0)
+    {
+        nvs_write_value("allocated_room", request.data);
+
+        allocated_room = calloc(strlen(request.data), sizeof(char));
+        strcpy(allocated_room, request.data);
+
+        xSemaphoreGive(conexaoMQTTSemaphore);
+    }
 }
 
 static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
@@ -60,8 +89,6 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
         ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
 
         handle_mqtt_register();
-
-        xSemaphoreGive(conexaoMQTTSemaphore);
         break;
     case MQTT_EVENT_DISCONNECTED:
         ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
@@ -78,8 +105,11 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
         break;
     case MQTT_EVENT_DATA:
         ESP_LOGI(TAG, "MQTT_EVENT_DATA");
+
         printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
         printf("DATA=%.*s\r\n", event->data_len, event->data);
+
+        handle_receive_data(event->data);
         break;
     case MQTT_EVENT_ERROR:
         ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
@@ -107,8 +137,24 @@ void mqtt_start()
     esp_mqtt_client_start(client);
 }
 
-void mqtt_envia_mensagem(char *topico, char *mensagem)
+void mqtt_send_message(char *topic, char *message, int adjust_topic)
 {
-    int message_id = esp_mqtt_client_publish(client, topico, mensagem, 0, 1, 0);
-    ESP_LOGI(TAG, "Mesnagem enviada, ID: %d", message_id);
+    char *full_topic;
+
+    if (adjust_topic == 0)
+        full_topic = topic;
+    else if (adjust_topic == 1)
+    {
+        full_topic = calloc(100, sizeof(char));
+        sprintf(full_topic, "fse2021/%s/%s/%s", student_id, allocated_room, topic);
+    }
+    else
+    {
+        ESP_LOGE(TAG, "Invalid option");
+        return;
+    }
+
+    int message_id = esp_mqtt_client_publish(client, full_topic, message, 0, 1, 0);
+
+    ESP_LOGI(TAG, "Mensagem enviada, ID: %d", message_id);
 }

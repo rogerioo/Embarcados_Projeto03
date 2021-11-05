@@ -31,7 +31,7 @@ void send_messages(void *params)
     {
         while (true)
         {
-            mqtt_envia_mensagem("Roger/teste/fse", "Eita nóis!");
+            mqtt_send_message("temperatura", "Eita nóis!", 1);
             vTaskDelay(5000 / portTICK_PERIOD_MS);
         }
     }
