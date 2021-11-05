@@ -13,18 +13,6 @@
 xSemaphoreHandle mutex_wifi_connection;
 xSemaphoreHandle conexaoMQTTSemaphore;
 
-void start_MQTT(void *params)
-{
-    while (true)
-    {
-        if (xSemaphoreTake(mutex_wifi_connection, portMAX_DELAY))
-        {
-            ESP_LOGI("MQTT", "Wi-fi conected");
-            mqtt_start();
-        }
-    }
-}
-
 void send_messages(void *params)
 {
     if (xSemaphoreTake(conexaoMQTTSemaphore, portMAX_DELAY))
@@ -39,15 +27,19 @@ void send_messages(void *params)
 
 void app_main()
 {
+    DHT11_init(GPIO_NUM_4);
     start_nvs();
 
     mutex_wifi_connection = xSemaphoreCreateBinary();
     conexaoMQTTSemaphore = xSemaphoreCreateBinary();
 
-    // DHT11_init(GPIO_NUM_4);
-
     wifi_start();
 
-    xTaskCreate(&start_MQTT, "MQTT start", 2048, NULL, 1, NULL);
+    if (xSemaphoreTake(mutex_wifi_connection, portMAX_DELAY))
+    {
+        ESP_LOGI("MQTT", "Wi-fi conected");
+        mqtt_start();
+    }
+
     xTaskCreate(&send_messages, "Send messages", 2048, NULL, 1, NULL);
 }
