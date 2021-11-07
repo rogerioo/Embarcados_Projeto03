@@ -5,34 +5,21 @@
 
 void start_nvs()
 {
-    esp_err_t ret = nvs_flash_init();
+    ESP_LOGI("NVS", "Intializing NVS");
 
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
-    {
-        ESP_ERROR_CHECK(nvs_flash_erase());
-        ret = nvs_flash_init();
-    }
-
-    ESP_ERROR_CHECK(ret);
+    ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(nvs_flash_init_partition("mqtt_data"));
 }
 
 void nvs_write_value(const char *variable_name, const char *value)
 {
+    ESP_LOGI("NVS", "Writing variable %s value %s on NVS", variable_name, value);
+
     nvs_handle mqq_data_handle;
-    esp_err_t res_nvs = nvs_open_from_partition("mqtt_data", "mqtt", NVS_READWRITE, &mqq_data_handle);
 
-    if (res_nvs == ESP_ERR_NVS_NOT_FOUND)
-    {
-        ESP_LOGE("NVS", "Couldn't open NVS handler");
-    }
+    ESP_ERROR_CHECK(nvs_open_from_partition("mqtt_data", "mqtt", NVS_READWRITE, &mqq_data_handle));
 
-    esp_err_t res = nvs_set_str(mqq_data_handle, variable_name, value);
-
-    if (res != ESP_OK)
-    {
-        ESP_LOGE("NVS", "Could't write on NVS: (%s)", esp_err_to_name(res));
-    }
+    ESP_ERROR_CHECK(nvs_set_str(mqq_data_handle, variable_name, value));
 
     nvs_commit(mqq_data_handle);
     nvs_close(mqq_data_handle);
@@ -40,6 +27,8 @@ void nvs_write_value(const char *variable_name, const char *value)
 
 const char *nvs_read_value(const char *variable_name)
 {
+    ESP_LOGI("NVS", "Reading variable %s from NVS", variable_name);
+
     nvs_handle mqq_data_handle;
     esp_err_t res_nvs = nvs_open_from_partition("mqtt_data", "mqtt", NVS_READONLY, &mqq_data_handle);
 
@@ -48,6 +37,8 @@ const char *nvs_read_value(const char *variable_name)
         ESP_LOGE("NVS", "Namespace empty: (%s)", esp_err_to_name(res_nvs));
         return "";
     }
+
+    ESP_ERROR_CHECK(res_nvs);
 
     size_t *required_size;
     required_size = calloc(1, sizeof(int));
