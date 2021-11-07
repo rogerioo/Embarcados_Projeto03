@@ -20,7 +20,7 @@ void IRAM_ATTR gpio_isr_handler(void *args)
 
 void button_init()
 {
-    ESP_LOGI("BUTTON", "Initalizing button GPIO");
+    ESP_LOGI(BUTTON_TAG, "Initalizing button GPIO");
 
     gpio_pad_select_gpio(BUTTON_PIN);
 
@@ -50,11 +50,11 @@ void button_task(void *params)
 
             if (state == 0)
             {
-                ESP_LOGI("BUTTON", "Button pressed: starting clock");
+                ESP_LOGI(BUTTON_TAG, "Button pressed: starting clock");
 
                 begin = clock();
 
-                message button_message = {"button", "Activate"};
+                message button_message = {BUTTON_TAG, "Activate"};
 
                 mqtt_send_message("estado", message_to_json(button_message), 1);
 
@@ -68,20 +68,20 @@ void button_task(void *params)
 
             int diference_seconds = pressed_time / CLOCKS_PER_SEC;
 
-            message button_message = {"button", "Deactivate"};
+            message button_message = {BUTTON_TAG, "Deactivate"};
 
             mqtt_send_message("estado", message_to_json(button_message), 1);
 
             if (diference_seconds >= 3)
 
             {
-                ESP_LOGI("BUTTON", "Button released: resetting ESP32");
+                ESP_LOGI(BUTTON_TAG, "Button released: resetting ESP32");
 
                 clean_nvs_partition();
                 esp_restart();
             }
 
-            ESP_LOGI("BUTTON", "Button released: nothing to do");
+            ESP_LOGI(BUTTON_TAG, "Button released: nothing to do");
         }
     }
 }

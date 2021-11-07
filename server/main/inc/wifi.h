@@ -8,7 +8,7 @@
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT BIT1
 
-#define TAG "Wifi"
+#define WIFI_TAG "Wifi"
 
 void wifi_start();
 

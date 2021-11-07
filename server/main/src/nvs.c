@@ -5,7 +5,7 @@
 
 void start_nvs()
 {
-    ESP_LOGI("NVS", "Intializing NVS");
+    ESP_LOGI(NVS_TAG, "Intializing NVS");
 
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(nvs_flash_init_partition("mqtt_data"));
@@ -13,7 +13,7 @@ void start_nvs()
 
 void nvs_write_value(const char *variable_name, const char *value)
 {
-    ESP_LOGI("NVS", "Writing variable %s value %s on NVS", variable_name, value);
+    ESP_LOGI(NVS_TAG, "Writing variable %s value %s on NVS", variable_name, value);
 
     nvs_handle mqq_data_handle;
 
@@ -27,14 +27,14 @@ void nvs_write_value(const char *variable_name, const char *value)
 
 const char *nvs_read_value(const char *variable_name)
 {
-    ESP_LOGI("NVS", "Reading variable %s from NVS", variable_name);
+    ESP_LOGI(NVS_TAG, "Reading variable %s from NVS", variable_name);
 
     nvs_handle mqq_data_handle;
     esp_err_t res_nvs = nvs_open_from_partition("mqtt_data", "mqtt", NVS_READONLY, &mqq_data_handle);
 
     if (res_nvs == ESP_ERR_NVS_NOT_FOUND)
     {
-        ESP_LOGE("NVS", "Namespace empty: (%s)", esp_err_to_name(res_nvs));
+        ESP_LOGE(NVS_TAG, "Namespace empty: (%s)", esp_err_to_name(res_nvs));
         return "";
     }
 
@@ -48,13 +48,13 @@ const char *nvs_read_value(const char *variable_name)
     switch (res)
     {
     case ESP_OK:
-        ESP_LOGI("NVS", "Find string with size: %zu", *required_size);
+        ESP_LOGI(NVS_TAG, "Find string with size: %zu", *required_size);
         break;
     case ESP_ERR_NOT_FOUND:
-        ESP_LOGE("NVS", "Couldn't find value");
+        ESP_LOGE(NVS_TAG, "Couldn't find value");
         return "";
     default:
-        ESP_LOGE("NVS", "Couldn't access NVS: (%s)", esp_err_to_name(res));
+        ESP_LOGE(NVS_TAG, "Couldn't access NVS: (%s)", esp_err_to_name(res));
         return "";
         break;
     }
@@ -65,13 +65,13 @@ const char *nvs_read_value(const char *variable_name)
     switch (res)
     {
     case ESP_OK:
-        ESP_LOGI("NVS", "Retrivied string: %s", value);
+        ESP_LOGI(NVS_TAG, "Retrivied string: %s", value);
         break;
     case ESP_ERR_NOT_FOUND:
-        ESP_LOGE("NVS", "Couldn't find value");
+        ESP_LOGE(NVS_TAG, "Couldn't find value");
         return "";
     default:
-        ESP_LOGE("NVS", "Couldn't access NVS: (%s)", esp_err_to_name(res));
+        ESP_LOGE(NVS_TAG, "Couldn't access NVS: (%s)", esp_err_to_name(res));
         return "";
         break;
     }

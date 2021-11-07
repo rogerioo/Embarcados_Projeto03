@@ -1,12 +1,16 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <driver/ledc.h>
+#include <esp_log.h>
 
 #define DUTY_FORCE 8191
 #define LED_GPIO 2
+#define LED_TAG "LED"
 
 void led_init()
 {
+    ESP_LOGI(LED_TAG, "Initializing LED GPIO %d", LED_GPIO);
+
     ledc_timer_config_t timer_config = {
         .speed_mode = LEDC_LOW_SPEED_MODE,
         .duty_resolution = LEDC_TIMER_13_BIT,
@@ -27,6 +31,8 @@ void led_init()
 
 void toggle_led(double percentage)
 {
+    ESP_LOGI(LED_TAG, "Toggle LED with %.0lf%%", percentage * 100);
+
     ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, percentage * DUTY_FORCE);
     ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0);
 

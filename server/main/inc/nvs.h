@@ -1,6 +1,8 @@
 #ifndef NVS_H
 #define NVS_H
 
+#define NVS_TAG "NVS"
+
 void start_nvs();
 void nvs_write_value(const char *variable_name, const char *value);
 const char *nvs_read_value(const char *variable_name);
