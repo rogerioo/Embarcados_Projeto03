@@ -89,3 +89,8 @@ const char *nvs_read_value(const char *variable_name)
 
     return value;
 }
+
+void clean_nvs_partition()
+{
+    nvs_flash_erase_partition("mqtt_data");
+}
