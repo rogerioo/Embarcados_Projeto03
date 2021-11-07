@@ -11,6 +11,7 @@
 #include <wifi.h>
 #include <mqtt.h>
 #include <nvs.h>
+#include <led.h>
 
 xSemaphoreHandle mutex_wifi_connection;
 xSemaphoreHandle conexaoMQTTSemaphore;
@@ -20,6 +21,8 @@ void app_main()
 {
     DHT11_init(GPIO_NUM_4);
     button_init();
+    led_init();
+
     start_nvs();
 
     mutex_wifi_connection = xSemaphoreCreateBinary();

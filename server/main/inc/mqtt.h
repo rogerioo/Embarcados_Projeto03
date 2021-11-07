@@ -1,7 +1,7 @@
 #ifndef MQTT_H
 #define MQTT_H
 
-#define TAG "MQTT"
+#define MQTT_TAG "MQTT"
 #define student_id "170021751"
 
 void mqtt_start();
