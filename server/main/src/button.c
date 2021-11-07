@@ -11,7 +11,7 @@
 
 extern xQueueHandle buttonMQ;
 
-static void IRAM_ATTR gpio_isr_handler(void *args)
+void IRAM_ATTR gpio_isr_handler(void *args)
 {
     int pin = (int)args;
 
@@ -20,6 +20,7 @@ static void IRAM_ATTR gpio_isr_handler(void *args)
 
 void button_init()
 {
+    ESP_LOGI("BUTTON", "Initalizing button GPIO");
 
     gpio_pad_select_gpio(BUTTON_PIN);
 
@@ -38,7 +39,7 @@ void button_init()
 
 void button_task(void *params)
 {
-    clock_t begin = clock();
+    clock_t begin = 0;
     int pin;
 
     while (true)
@@ -49,6 +50,8 @@ void button_task(void *params)
 
             if (state == 0)
             {
+                ESP_LOGI("BUTTON", "Button pressed: starting clock");
+
                 begin = clock();
 
                 message button_message = {"button", "Activate"};
@@ -57,6 +60,9 @@ void button_task(void *params)
 
                 continue;
             }
+
+            if (begin == 0)
+                continue;
 
             clock_t pressed_time = clock() - begin;
 
@@ -69,9 +75,13 @@ void button_task(void *params)
             if (diference_seconds >= 3)
 
             {
+                ESP_LOGI("BUTTON", "Button released: resetting ESP32");
+
                 clean_nvs_partition();
                 esp_restart();
             }
+
+            ESP_LOGI("BUTTON", "Button released: nothing to do");
         }
     }
 }
