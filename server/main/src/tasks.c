@@ -1,6 +1,7 @@
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
 #include <freertos/task.h>
+#include <driver/gpio.h>
 #include <esp_log.h>
 
 #include <message.h>
@@ -9,6 +10,9 @@
 #include <mqtt.h>
 
 extern xSemaphoreHandle conexaoMQTTSemaphore;
+extern xQueueHandle buttonMQ;
+
+extern void IRAM_ATTR gpio_isr_handler(void *args);
 
 void temperature_task(void *params)
 {
@@ -61,6 +65,40 @@ void temperature_task(void *params)
             counter = 0;
             mean_temperature = 0.0f;
             mean_humidity = 0.0f;
+        }
+    }
+}
+
+void button_task(void *params)
+{
+    int pin;
+
+    while (true)
+    {
+        if (xQueueReceive(buttonMQ, &pin, portMAX_DELAY))
+        {
+            int state = gpio_get_level(pin);
+
+            ESP_LOGI("BUTTON_TASK", "Button pressed");
+
+            if (state == 1)
+            {
+                gpio_isr_handler_remove(pin);
+
+                while (gpio_get_level(pin) == state)
+                {
+                    vTaskDelay(10 / portTICK_PERIOD_MS);
+                }
+
+                message button_message = {"button", "Activate"};
+
+                mqtt_send_message("estado", message_to_json(button_message), 1);
+
+                vTaskDelay(50 / portTICK_PERIOD_MS);
+                gpio_isr_handler_add(pin, gpio_isr_handler, (void *)pin);
+
+                continue;
+            }
         }
     }
 }
