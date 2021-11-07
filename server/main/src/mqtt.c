@@ -134,7 +134,7 @@ void mqtt_start()
     esp_mqtt_client_start(client);
 }
 
-void mqtt_send_message(char *topic, char *message, int adjust_topic)
+void mqtt_send_message(char *topic, const char *message, int adjust_topic)
 {
     char *full_topic;
 

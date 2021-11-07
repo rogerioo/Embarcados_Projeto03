@@ -6,6 +6,6 @@
 
 void mqtt_start();
 
-void mqtt_send_message(char *topic, char *message, int adjust_topic);
+void mqtt_send_message(char *topic, const char *message, int adjust_topic);
 
 #endif
