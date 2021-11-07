@@ -44,14 +44,14 @@ void handle_mqtt_register()
     char *topic = calloc(100, sizeof(char));
     sprintf(topic, "fse2021/%s/dispositivos/%s", student_id, mac_address);
 
-    esp_mqtt_client_subscribe(client, topic, 0);
-
     if (strcmp(saved_room, "") != 0)
     {
         ESP_LOGI(MQTT_TAG, "Skipping register procedure");
 
         allocated_room = saved_room;
         xSemaphoreGive(conexaoMQTTSemaphore);
+
+        esp_mqtt_client_subscribe(client, topic, 0);
 
         return;
     }
@@ -60,6 +60,8 @@ void handle_mqtt_register()
     const char *json = message_to_json(request);
 
     mqtt_send_message(topic, json, 0);
+
+    esp_mqtt_client_subscribe(client, topic, 0);
 
     ESP_LOGI(MQTT_TAG, "Send register request to topic %s", topic);
 }
@@ -81,13 +83,15 @@ void handle_receive_data(const char *data)
     {
         toggle_led(atof(request.data));
     }
+    else if (strcmp(request.command, "reset") == 0)
+    {
+        clean_nvs_partition();
+        esp_restart();
+    }
 }
 
 static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
 {
-    esp_mqtt_client_handle_t client = event->client;
-    int msg_id;
-
     switch (event->event_id)
     {
     case MQTT_EVENT_CONNECTED:
