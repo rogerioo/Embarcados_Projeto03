@@ -2,12 +2,15 @@
 
 #include <message.h>
 
+extern char *mac_address;
+
 char const *message_to_json(message params)
 {
     cJSON *request = cJSON_CreateObject();
 
     cJSON_AddStringToObject(request, "command", params.command);
     cJSON_AddStringToObject(request, "data", params.data);
+    cJSON_AddStringToObject(request, "id", mac_address);
 
     char *json = cJSON_Print(request);
 

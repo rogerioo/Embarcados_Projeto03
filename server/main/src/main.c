@@ -17,6 +17,8 @@ xSemaphoreHandle mutex_wifi_connection;
 xSemaphoreHandle conexaoMQTTSemaphore;
 xQueueHandle buttonMQ;
 
+char *mac_address;
+
 void app_main()
 {
     DHT11_init(GPIO_NUM_4);

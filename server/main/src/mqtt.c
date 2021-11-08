@@ -26,6 +26,8 @@
 #include <led.h>
 
 extern xSemaphoreHandle conexaoMQTTSemaphore;
+extern char *mac_address;
+
 esp_mqtt_client_handle_t client;
 
 char *allocated_room;
@@ -37,7 +39,7 @@ void handle_mqtt_register()
     uint8_t baseMac[6] = {0};
     esp_efuse_mac_get_default(baseMac);
 
-    char *mac_address = calloc(18, sizeof(char));
+    mac_address = calloc(18, sizeof(char));
     sprintf(mac_address, "%02X:%02X:%02X:%02X:%02X:%02X",
             baseMac[0], baseMac[1], baseMac[2], baseMac[3], baseMac[4], baseMac[5]);
 
@@ -70,7 +72,7 @@ void handle_receive_data(const char *data)
 {
     message request = json_to_message(data);
 
-    if (strcmp(request.command, "register") == 0)
+    if (strcmp(request.command, "allocated_room") == 0)
     {
         nvs_write_value("allocated_room", request.data);
 
@@ -139,7 +141,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 void mqtt_start()
 {
     esp_mqtt_client_config_t mqtt_config = {
-        .uri = "mqtt://test.mosquitto.org",
+        .uri = "mqtt://broker.hivemq.com",
     };
     client = esp_mqtt_client_init(&mqtt_config);
     esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, client);

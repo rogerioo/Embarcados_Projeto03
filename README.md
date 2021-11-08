@@ -1,23 +1,24 @@
 # FSE - Projeto 3 (Final)
 
-O objetivo do projeto final é, através dos conhecimentos adquiridos em aula, desenvolver uma automação para residencias. Para realizar o escopo proposto, utiliza-se uma ESP32 como dispositivo de automaçã, o qual consideramos ser nosso "server". 
+O objetivo do projeto final é, através dos conhecimentos adquiridos em aula, desenvolver uma automação para residencias. Para realizar o escopo proposto, utiliza-se uma ESP32 como dispositivo de automaçã, o qual consideramos ser nosso "server".
 
 Para tornar a automação ainda mais real, no projeto, o led da ESP representa uma lâmpada, e o botão representa o sensor de presença. Na interface gráfica do servidor, realiza-se a interação entre os dispositivos cadastrados, além da capacidade de acompanhar umidade e temperatura de certo ambiente, neste cenário, todas as informações são coletadas e medidas na ESP. Há o alarme que, quando acionado e o sensor de presença ativado, dispara um som.
 
-Ademais, o servidor central realiza a comunicação com a ESP utilizando o protocolo MQTT. 
+Ademais, o servidor central realiza a comunicação com a ESP utilizando o protocolo MQTT.
 
 ![Figura](/imagens/diagrama_arquitetura.png)
 
-### Alunos: 
-Ana Carolina Carvalho da Silva - 19/0063441 
+### Alunos
+
+Ana Carolina Carvalho da Silva - 19/0063441
 
 Rogério S. dos Santos Júnior - 17/0021751
 
 ## Configurações
 
-- **Linguagem:** 
-ESP - C  
-Central - JavaScript 
+- **Linguagem:**
+  ESP - C  
+  Central - JavaScript
 
 - **Instruções de execução:**
 
@@ -28,9 +29,51 @@ Central - JavaScript
 
 ## Instruções para iniciar o servidor central
 
-Na pasta `client` deve-se executar o comando `docker-compose up --build`. Por consequência, a aplicação poderá ser acessada na porta 3000 do localhost
+Entre na pasta da ESP32:
+
+```bash
+    cd server
+```
+
+Rode o servidor do frontend:
+
+```bash
+    docker-compose up
+```
+
+A aplicação estará disponivel no `localhost:300` do seu dispositivo.
 
 ## Instruções para iniciar a esp
+
+Entre na pasta da ESP32:
+
+```bash
+    cd server
+```
+
+Para a execução dos passos seguintes, é necessário que tenha ativado antes as variáveis de ambiente da **ESP-IDF**. Então dentro da pasta da **ESP-IDF** é necessário que execute o seguinte comando:
+
+```bash
+    . $HOME/esp/esp-idf/export.sh
+```
+
+Execute a configuração das variáveis de ambiente pelo `menuconfig`:
+
+```bash
+    idf.py menuconfig
+```
+
+Compile o código do servidor:
+
+```bash
+    idf.py build
+```
+
+Carregue o executável na placa e rode o comando para acompanhar a execução. Note que o -p é o caminho da ESP no seu computador:
+
+```bash
+    idf.py -p /dev/ttyUSB0 flash monitor
+```
 
 ### Clone do repositório
 
@@ -40,8 +83,6 @@ Na pasta `client` deve-se executar o comando `docker-compose up --build`. Por co
 
 `cd Embarcados_Projeto03/server`
 
-
-
 ## Video demonstrativo
 
-
+O vídeos está disponível na raiz do projeto.
