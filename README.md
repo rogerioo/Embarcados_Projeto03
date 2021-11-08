@@ -8,6 +8,7 @@ Ademais, o servidor central realiza a comunicação com a ESP utilizando o proto
 
 ### Alunos: 
 Ana Carolina Carvalho da Silva - 19/0063441 
+
 Rogério S. dos Santos Júnior - 17/0021751
 
 ## Configurações
