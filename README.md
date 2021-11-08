@@ -6,6 +6,8 @@ Para tornar a automação ainda mais real, no projeto, o led da ESP representa u
 
 Ademais, o servidor central realiza a comunicação com a ESP utilizando o protocolo MQTT. 
 
+![Figura](/imagens/diagrama_arquitetura.png)
+
 ### Alunos: 
 Ana Carolina Carvalho da Silva - 19/0063441 
 
